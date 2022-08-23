@@ -48,6 +48,7 @@
         "cerrno": "cpp",
         "climits": "cpp",
         "ios": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "chrono": "cpp"
     }
 }
