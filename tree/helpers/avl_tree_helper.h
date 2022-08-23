@@ -6,11 +6,13 @@
 
 namespace fantasil
 {
-    namespace helper_details{
+    namespace details{
 
         enum struct avl_unbalance_type{
             type_ll,type_lr,type_rl,type_rr,type_unknown
         };
+
+       
 
         constexpr int min_diff=2; //高度之差>=2时为不平衡
 
@@ -30,6 +32,51 @@ namespace fantasil
         bool is_unbalance(T *node)
         {
             return std::abs(height_diff_of_child_node(node)) > 1;
+        }
+
+        template<BinaryTreeNode T>
+        T* trace_up_to_balance(T* root,T* node)
+        {
+            using node_type=T;
+            using node_ptr =node_type*;
+
+            auto diff=height_diff_of_child_node(node);
+            if(std::abs(diff)>2)
+                throw std::logic_error{"bad node for trace back to balance"};
+            
+            node_ptr cur=node;
+            node_ptr p=cur->parent;
+            node_ptr tmp=nullptr;
+            avl_unbalance_type type=avl_unbalance_type::type_unknown;
+            while(cur)
+            {
+                if(is_unbalance(cur))
+                {
+                    type=unbalance_type(cur);
+                    switch (type)
+                    {
+                    case avl_unbalance_type::type_ll:
+                        tmp=ll_rotate(cur);
+                        break;
+                    case avl_unbalance_type::type_lr:
+                        tmp=lr_rotate(cur);
+                        break;
+                    case avl_unbalance_type::type_rl:
+                        tmp=rl_rotate(cur);
+                        break;
+                    case avl_unbalance_type::type_rr:
+                        tmp=rr_rotate(cur);
+                        break;
+                    default:
+                        throw std::logic_error{"error unknown unbalance type"};
+                        break;
+                    }
+                    cur=tmp;
+                }
+                cur=cur->parent;
+
+                
+            }
         }
 
          //将parent左旋成child的左孩子
@@ -239,6 +286,15 @@ namespace fantasil
             }
             return root;
         }
+
+        template<BinaryTreeNode T>
+        T* node_erase_avl_impl(T* root,T* node)
+        {
+
+        }
+
+        
+        
     }
 }
 
